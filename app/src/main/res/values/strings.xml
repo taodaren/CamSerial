@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">CamSerial</string>
+    <string name="btn_video_tape">录像</string>
+</resources>
