@@ -26,6 +26,7 @@ import cn.shicancan.camserial.model.MacBean;
 import cn.shicancan.camserial.presenter.Urls;
 
 import static cn.shicancan.camserial.app.AppConstant.TAG_SERIAL_PORT;
+import static cn.shicancan.camserial.app.AppConstant.TAG_TYC;
 import static cn.shicancan.camserial.app.AppConstant.TAG_WEB_SOCKET;
 import static cn.shicancan.camserial.utils.DeviceInfoUtils.getPhoneBrand;
 import static cn.shicancan.camserial.utils.DeviceInfoUtils.getPhoneIMEI;
@@ -55,6 +56,9 @@ public class MainActivity extends Activity {
         mtvPhoneInfo = findViewById(R.id.tv_phone_info);
         mMacWifi = getConnectedWifiMacAddress(this);
         mMacPhone = getMacAddress(this);
+
+        Log.i(TAG_TYC, "mMacWifi: " + mMacWifi);
+        Log.i(TAG_TYC, "mMacPhone: " + mMacPhone);
 
         getPhoneInfo();
         setWebSocket();

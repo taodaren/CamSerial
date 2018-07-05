@@ -14,7 +14,8 @@ import java.util.List;
 public class MacAddressUtils {
 
     /**
-     * 获取手机的 Mac 地址，在 Wifi 未开启或者未连接的情况下也能获取手机 Mac 地址
+     * 获取手机的 Mac 地址
+     * 在 Wifi 未开启或者未连接的情况下也能获取手机 Mac 地址
      */
     public static String getMacAddress(Context context) {
         String macAddress = null;
@@ -41,7 +42,7 @@ public class MacAddressUtils {
      * 获取 WifiInfo
      */
     public static WifiInfo getWifiInfo(Context context) {
-        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = null;
         if (null != wifiManager) {
             info = wifiManager.getConnectionInfo();
@@ -71,7 +72,7 @@ public class MacAddressUtils {
      * 获取当前可连接 Wifi 列表
      */
     public static List<?> getAvailableNetworks(Context context) {
-        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         List<ScanResult> wifiList = null;
         if (wifiManager != null) {
             wifiList = wifiManager.getScanResults();
@@ -84,7 +85,7 @@ public class MacAddressUtils {
      */
     public static String getConnectedWifiMacAddress(Context context) {
         String connectedWifiMacAddress = null;
-        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         List<ScanResult> wifiList;
 
         if (wifiManager != null) {

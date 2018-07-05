@@ -2,6 +2,7 @@ package cn.shicancan.camserial.utils;
 
 import android.content.Context;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import static android.content.Context.TELEPHONY_SERVICE;
 
@@ -28,10 +29,16 @@ public class DeviceInfoUtils {
 
     /**
      * 获取手机的 IMEI 号码
+     * 需 READ_PHONE_STATE 权限
      */
     public static String getPhoneIMEI(Context context) {
-        mTelephonyManager = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);
-        return mTelephonyManager.getDeviceId();
+        mTelephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        String deviceId = mTelephonyManager.getDeviceId();
+        if (deviceId == null) {
+            return "UnKnow";
+        } else {
+            return deviceId;
+        }
     }
 
     /**
