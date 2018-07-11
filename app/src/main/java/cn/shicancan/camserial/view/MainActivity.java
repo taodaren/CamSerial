@@ -2,7 +2,11 @@ package cn.shicancan.camserial.view;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.serialport.SerialPort;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +27,7 @@ import java.io.OutputStream;
 
 import cn.shicancan.camserial.R;
 import cn.shicancan.camserial.model.MacBean;
+import cn.shicancan.camserial.presenter.IPushVideoAidlInterface;
 import cn.shicancan.camserial.presenter.Urls;
 
 import static cn.shicancan.camserial.app.AppConstant.TAG_SERIAL_PORT;
@@ -48,6 +53,19 @@ public class MainActivity extends Activity {
     private TextView mtvPhoneInfo;
     private String mMacWifi, mMacPhone;
 
+    private IPushVideoAidlInterface iPushVideoAidlInterface;
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            iPushVideoAidlInterface = IPushVideoAidlInterface.Stub.asInterface(iBinder);
+            // IPushVideoAidlInterface 已经得到，想干什么干什么
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +81,11 @@ public class MainActivity extends Activity {
         getPhoneInfo();
         setWebSocket();
 //        openSerialPort();
+
+        // 绑定视频推流服务
+        Intent intent = new Intent("cn.shicancan.uvcdirectcamera.IPushVideoAidlInterface");
+        intent.setPackage("cn.shicancan.uvcdirectcamera");
+        bindService(intent, connection, BIND_AUTO_CREATE);
     }
 
     @Override
@@ -74,6 +97,9 @@ public class MainActivity extends Activity {
             mSerialPort.close();
         }
         super.onDestroy();
+
+        // 取消绑定视频推流服务
+        unbindService(connection);
     }
 
     /**
@@ -118,6 +144,7 @@ public class MainActivity extends Activity {
                             @Override
                             public void onStringAvailable(String s) {
                                 Log.i(TAG_WEB_SOCKET, "来自于服务器的信息--->" + s);
+                                // TODO: 2018/7/10
                             }
                         });
                         webSocket.setDataCallback(new DataCallback() {

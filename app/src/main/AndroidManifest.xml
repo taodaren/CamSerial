@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RESTART_PACKAGES" />
+    <uses-permission android:name="cn.shicancan.uvcdirectcamera.permission.PUSH_VIDEO" />
 
     <uses-permission
         android:name="android.permission.READ_LOGS"
