@@ -143,7 +143,7 @@ public class MainActivity extends Activity {
 
         mModel = getPhoneModel();
         mDeviceId = getPhoneIMEI(this);
-        mDeviceNum = "10006";
+        mDeviceNum = "10008";
         mMacWifi = getConnectedWifiMacAddress(this);
         mMacPhone = getMacAddress(this);
 
@@ -625,34 +625,34 @@ public class MainActivity extends Activity {
     }
 
     private void sendStopStream() {
-        try {
-            mIPush.stop_push();
-            mClient.websocket(
-                    Urls.WEB_SOCKET, Urls.PORT, new AsyncHttpClient.WebSocketConnectCallback() {
-                        @Override
-                        public void onCompleted(Exception ex, WebSocket webSocket) {
-                            if (ex != null) {
-                                ex.printStackTrace();
-                                return;
-                            }
-
-                            // 发送设备停止推流信息给后台
-                            SendPushStreamBean infoBean = new SendPushStreamBean();
-                            infoBean.setStatus(VALUE_SUCCESS);
-                            infoBean.setReason("no reason");
-                            infoBean.setPort(VALUE_DEV);
-                            infoBean.setEvent(EVENT_PUSH_STREAM);
-                            infoBean.setDevice(mDeviceNum);
-                            infoBean.setCmd(CMD_PUSH_STOP);
-                            String toServerJson = mGson.toJson(infoBean);
-                            Log.i(TAG_WEB_SOCKET, "Send StopStream JSON--->" + toServerJson);
-                            webSocket.send(toServerJson);
-                        }
-                    }
-            );
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            mIPush.stop_push();
+//            mClient.websocket(
+//                    Urls.WEB_SOCKET, Urls.PORT, new AsyncHttpClient.WebSocketConnectCallback() {
+//                        @Override
+//                        public void onCompleted(Exception ex, WebSocket webSocket) {
+//                            if (ex != null) {
+//                                ex.printStackTrace();
+//                                return;
+//                            }
+//
+//                            // 发送设备停止推流信息给后台
+//                            SendPushStreamBean infoBean = new SendPushStreamBean();
+//                            infoBean.setStatus(VALUE_SUCCESS);
+//                            infoBean.setReason("no reason");
+//                            infoBean.setPort(VALUE_DEV);
+//                            infoBean.setEvent(EVENT_PUSH_STREAM);
+//                            infoBean.setDevice(mDeviceNum);
+//                            infoBean.setCmd(CMD_PUSH_STOP);
+//                            String toServerJson = mGson.toJson(infoBean);
+//                            Log.i(TAG_WEB_SOCKET, "Send StopStream JSON--->" + toServerJson);
+//                            webSocket.send(toServerJson);
+//                        }
+//                    }
+//            );
+//        } catch (RemoteException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void sendFlashLight() {
