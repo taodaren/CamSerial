@@ -29,6 +29,7 @@ import java.io.OutputStream;
 import cn.shicancan.camserial.R;
 import cn.shicancan.camserial.model.ReceiveCmdBean;
 import cn.shicancan.camserial.model.ReceiveStatusBean;
+import cn.shicancan.camserial.model.SendDeviceBindAppBean;
 import cn.shicancan.camserial.model.SendDeviceRequestConnBean;
 import cn.shicancan.camserial.model.SendGetDeviceInfoBean;
 import cn.shicancan.camserial.model.SendGetDeviceStatusBean;
@@ -202,10 +203,12 @@ public class MainActivity extends Activity {
                 }
                 break;
             case STATUS_BINDING_SUCCESS:
-                break;
             case STATUS_BINDING_FAILED:
-                break;
             case STATUS_WAITING:
+                // 设备与 APP 绑定
+                if (bean.getEvent().equals("AppBindDevice")) {
+                        sendAppBindDevice();
+                }
                 break;
             default:
                 break;
@@ -336,6 +339,84 @@ public class MainActivity extends Activity {
         String toServerJson = mGson.toJson(infoBean);
         Log.i(TAG_WEB_SOCKET, "Send HeartLinkInfo JSON--->" + toServerJson);
         webSocket.send(toServerJson);
+    }
+
+    private void sendDeviceReqConn() {
+        mClient.websocket(
+                Urls.WEB_SOCKET, Urls.PORT, new AsyncHttpClient.WebSocketConnectCallback() {
+                    @Override
+                    public void onCompleted(Exception ex, WebSocket webSocket) {
+                        if (ex != null) {
+                            ex.printStackTrace();
+                            return;
+                        }
+
+                        // 发送设备状态给后台
+                        SendDeviceRequestConnBean infoBean = new SendDeviceRequestConnBean();
+                        infoBean.setCmd("Connect");
+                        infoBean.setPort("Dev");
+                        infoBean.setEvent("GetDeviceState");
+                        // TODO: 2018/7/12 暂时写死
+                        infoBean.setDevice("10006");
+                        infoBean.setAction("Connect");
+                        String toServerJson = mGson.toJson(infoBean);
+                        Log.i(TAG_WEB_SOCKET, "Send DeviceRequestConnect JSON--->" + toServerJson);
+                        webSocket.send(toServerJson);
+                    }
+                }
+        );
+    }
+
+    private void sendDeviceReqDisconn() {
+        mClient.websocket(
+                Urls.WEB_SOCKET, Urls.PORT, new AsyncHttpClient.WebSocketConnectCallback() {
+                    @Override
+                    public void onCompleted(Exception ex, WebSocket webSocket) {
+                        if (ex != null) {
+                            ex.printStackTrace();
+                            return;
+                        }
+
+                        // 发送设备状态给后台
+                        SendDeviceRequestConnBean infoBean = new SendDeviceRequestConnBean();
+                        infoBean.setCmd("Disconnect");
+                        infoBean.setPort("Dev");
+                        infoBean.setEvent("GetDeviceState");
+                        // TODO: 2018/7/12 暂时写死
+                        infoBean.setDevice("10006");
+                        infoBean.setAction("Disconnect");
+                        String toServerJson = mGson.toJson(infoBean);
+                        Log.i(TAG_WEB_SOCKET, "Send DeviceRequestDisconnect JSON--->" + toServerJson);
+                        webSocket.send(toServerJson);
+                    }
+                }
+        );
+    }
+
+    private void sendAppBindDevice() {
+        mClient.websocket(
+                Urls.WEB_SOCKET, Urls.PORT, new AsyncHttpClient.WebSocketConnectCallback() {
+                    @Override
+                    public void onCompleted(Exception ex, WebSocket webSocket) {
+                        if (ex != null) {
+                            ex.printStackTrace();
+                            return;
+                        }
+
+                        // 发送设备状态给后台
+                        SendDeviceBindAppBean infoBean = new SendDeviceBindAppBean();
+                        infoBean.setPort("Dev");
+                        infoBean.setEvent("AppBindDevice");
+                        // TODO: 2018/7/12 暂时写死
+                        infoBean.setDevice("10006");
+                        infoBean.setMacWifi(mMacWifi);
+                        infoBean.setMacPhone(mMacPhone);
+                        String toServerJson = mGson.toJson(infoBean);
+                        Log.i(TAG_WEB_SOCKET, "Send AppBindDevice JSON--->" + toServerJson);
+                        webSocket.send(toServerJson);
+                    }
+                }
+        );
     }
 
     private void sendDeviceInfo() {
@@ -549,58 +630,6 @@ public class MainActivity extends Activity {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-    }
-
-    private void sendDeviceReqConn() {
-        mClient.websocket(
-                Urls.WEB_SOCKET, Urls.PORT, new AsyncHttpClient.WebSocketConnectCallback() {
-                    @Override
-                    public void onCompleted(Exception ex, WebSocket webSocket) {
-                        if (ex != null) {
-                            ex.printStackTrace();
-                            return;
-                        }
-
-                        // 发送设备状态给后台
-                        SendDeviceRequestConnBean infoBean = new SendDeviceRequestConnBean();
-                        infoBean.setCmd("Connect");
-                        infoBean.setPort("Dev");
-                        infoBean.setEvent("GetDeviceState");
-                        // TODO: 2018/7/12 暂时写死
-                        infoBean.setDevice("10006");
-                        infoBean.setAction("Connect");
-                        String toServerJson = mGson.toJson(infoBean);
-                        Log.i(TAG_WEB_SOCKET, "Send DeviceRequestConnect JSON--->" + toServerJson);
-                        webSocket.send(toServerJson);
-                    }
-                }
-        );
-    }
-
-    private void sendDeviceReqDisconn() {
-        mClient.websocket(
-                Urls.WEB_SOCKET, Urls.PORT, new AsyncHttpClient.WebSocketConnectCallback() {
-                    @Override
-                    public void onCompleted(Exception ex, WebSocket webSocket) {
-                        if (ex != null) {
-                            ex.printStackTrace();
-                            return;
-                        }
-
-                        // 发送设备状态给后台
-                        SendDeviceRequestConnBean infoBean = new SendDeviceRequestConnBean();
-                        infoBean.setCmd("Disconnect");
-                        infoBean.setPort("Dev");
-                        infoBean.setEvent("GetDeviceState");
-                        // TODO: 2018/7/12 暂时写死
-                        infoBean.setDevice("10006");
-                        infoBean.setAction("Disconnect");
-                        String toServerJson = mGson.toJson(infoBean);
-                        Log.i(TAG_WEB_SOCKET, "Send DeviceRequestDisconnect JSON--->" + toServerJson);
-                        webSocket.send(toServerJson);
-                    }
-                }
-        );
     }
 
     private void sendFlashLight() {
