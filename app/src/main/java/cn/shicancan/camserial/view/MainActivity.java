@@ -37,8 +37,12 @@ import cn.shicancan.camserial.model.SendGetSensorInfoBean;
 import cn.shicancan.camserial.model.SendHeartLinkBean;
 import cn.shicancan.camserial.model.SendLightFlashBean;
 import cn.shicancan.camserial.model.SendParameterControlBean;
+import cn.shicancan.camserial.model.SendPhotographBean;
 import cn.shicancan.camserial.model.SendPushStreamBean;
 import cn.shicancan.camserial.model.SendRecordStartBean;
+import cn.shicancan.camserial.model.SendTimeCalibrationBean;
+import cn.shicancan.camserial.model.SendUploadImgBean;
+import cn.shicancan.camserial.model.SendVideoModeBean;
 import cn.shicancan.camserial.presenter.IPushVideoAidlInterface;
 import cn.shicancan.camserial.presenter.Urls;
 
@@ -48,11 +52,16 @@ import static cn.shicancan.camserial.app.AppConstant.CMD_FLASH_LIGHT;
 import static cn.shicancan.camserial.app.AppConstant.CMD_FLASH_LIGHT_OFF;
 import static cn.shicancan.camserial.app.AppConstant.CMD_FLASH_LIGHT_ON;
 import static cn.shicancan.camserial.app.AppConstant.CMD_LIMIT;
+import static cn.shicancan.camserial.app.AppConstant.CMD_PHOTO_ID;
 import static cn.shicancan.camserial.app.AppConstant.CMD_PUSH_START;
 import static cn.shicancan.camserial.app.AppConstant.CMD_PUSH_STOP;
 import static cn.shicancan.camserial.app.AppConstant.CMD_RECORD_START;
 import static cn.shicancan.camserial.app.AppConstant.CMD_RECORD_STOP;
 import static cn.shicancan.camserial.app.AppConstant.CMD_SENSOR_DATA;
+import static cn.shicancan.camserial.app.AppConstant.CMD_SYNC_TIME;
+import static cn.shicancan.camserial.app.AppConstant.CMD_TAKE;
+import static cn.shicancan.camserial.app.AppConstant.CMD_VIDEO_MODE_RECYCLE;
+import static cn.shicancan.camserial.app.AppConstant.CMD_VIDEO_MODE_UNIDIRECTIONAL;
 import static cn.shicancan.camserial.app.AppConstant.STATUS_BINDING_FAILED;
 import static cn.shicancan.camserial.app.AppConstant.STATUS_BINDING_SUCCESS;
 import static cn.shicancan.camserial.app.AppConstant.STATUS_CONNECTED;
@@ -287,6 +296,36 @@ public class MainActivity extends Activity {
                 // 限制参数控制
                 if (bean.getEvent().equals("SetLimit")) {
                     sendSetLimit();
+                }
+                break;
+            case CMD_SYNC_TIME:
+                // 时间校准
+                if (bean.getEvent().equals("SetTime")) {
+                    sendSetTime();
+                }
+                break;
+            case CMD_TAKE:
+                // 拍照
+                if (bean.getEvent().equals("TakePhoto")) {
+                    sendTakePhoto();
+                }
+                break;
+            case CMD_PHOTO_ID:
+                // 上传图片
+                if (bean.getEvent().equals("UploadPhoto")) {
+                    sendUploadPhoto();
+                }
+                break;
+            case CMD_VIDEO_MODE_RECYCLE:
+                // 录像方式（回收）
+                if (bean.getEvent().equals("RecordMode")) {
+                    sendRecordModeRecy();
+                }
+                break;
+            case CMD_VIDEO_MODE_UNIDIRECTIONAL:
+                // 录像方式（单向）
+                if (bean.getEvent().equals("RecordMode")) {
+                    sendRecordModeUnid();
                 }
                 break;
             default:
@@ -739,6 +778,141 @@ public class MainActivity extends Activity {
                         infoBean.setCmd("Limit");
                         String toServerJson = mGson.toJson(infoBean);
                         Log.i(TAG_WEB_SOCKET, "Send SetLimit JSON--->" + toServerJson);
+                        webSocket.send(toServerJson);
+                    }
+                }
+        );
+    }
+
+    private void sendSetTime() {
+        mClient.websocket(
+                Urls.WEB_SOCKET, Urls.PORT, new AsyncHttpClient.WebSocketConnectCallback() {
+                    @Override
+                    public void onCompleted(Exception ex, WebSocket webSocket) {
+                        if (ex != null) {
+                            ex.printStackTrace();
+                            return;
+                        }
+
+                        // 发送时间校准信息给后台
+                        SendTimeCalibrationBean infoBean = new SendTimeCalibrationBean();
+                        infoBean.setStatus("Success");
+                        infoBean.setReason("no reason");
+                        infoBean.setPort("Dev");
+                        infoBean.setEvent("SetTime");
+                        // TODO: 2018/7/12 暂时写死
+                        infoBean.setDevice("10006");
+                        infoBean.setCmd("Time");
+                        String toServerJson = mGson.toJson(infoBean);
+                        Log.i(TAG_WEB_SOCKET, "Send SetTime JSON--->" + toServerJson);
+                        webSocket.send(toServerJson);
+                    }
+                }
+        );
+    }
+
+    private void sendTakePhoto() {
+        mClient.websocket(
+                Urls.WEB_SOCKET, Urls.PORT, new AsyncHttpClient.WebSocketConnectCallback() {
+                    @Override
+                    public void onCompleted(Exception ex, WebSocket webSocket) {
+                        if (ex != null) {
+                            ex.printStackTrace();
+                            return;
+                        }
+
+                        // 发送拍照信息给后台
+                        SendPhotographBean infoBean = new SendPhotographBean();
+                        infoBean.setStatus("Success");
+                        infoBean.setReason("no reason");
+                        infoBean.setPort("Dev");
+                        infoBean.setEvent("TakePhoto");
+                        // TODO: 2018/7/12 暂时写死
+                        infoBean.setDevice("10006");
+                        infoBean.setCmd("Take");
+                        String toServerJson = mGson.toJson(infoBean);
+                        Log.i(TAG_WEB_SOCKET, "Send TakePhoto JSON--->" + toServerJson);
+                        webSocket.send(toServerJson);
+                    }
+                }
+        );
+    }
+
+    private void sendUploadPhoto() {
+        mClient.websocket(
+                Urls.WEB_SOCKET, Urls.PORT, new AsyncHttpClient.WebSocketConnectCallback() {
+                    @Override
+                    public void onCompleted(Exception ex, WebSocket webSocket) {
+                        if (ex != null) {
+                            ex.printStackTrace();
+                            return;
+                        }
+
+                        // 发送上传图片信息给后台
+                        SendUploadImgBean infoBean = new SendUploadImgBean();
+                        infoBean.setStatus("Success");
+                        infoBean.setReason("no reason");
+                        infoBean.setPort("Dev");
+                        infoBean.setEvent("UploadPhoto");
+                        // TODO: 2018/7/12 暂时写死
+                        infoBean.setDevice("10006");
+                        infoBean.setCmd("PhotoID");
+                        String toServerJson = mGson.toJson(infoBean);
+                        Log.i(TAG_WEB_SOCKET, "Send UploadPhoto JSON--->" + toServerJson);
+                        webSocket.send(toServerJson);
+                    }
+                }
+        );
+    }
+
+    private void sendRecordModeRecy() {
+        mClient.websocket(
+                Urls.WEB_SOCKET, Urls.PORT, new AsyncHttpClient.WebSocketConnectCallback() {
+                    @Override
+                    public void onCompleted(Exception ex, WebSocket webSocket) {
+                        if (ex != null) {
+                            ex.printStackTrace();
+                            return;
+                        }
+
+                        // 发送录像方式信息给后台
+                        SendVideoModeBean infoBean = new SendVideoModeBean();
+                        infoBean.setStatus("Success");
+                        infoBean.setReason("no reason");
+                        infoBean.setPort("Dev");
+                        infoBean.setEvent("RecordMode");
+                        // TODO: 2018/7/12 暂时写死
+                        infoBean.setDevice("10006");
+                        infoBean.setCmd("Recycle");
+                        String toServerJson = mGson.toJson(infoBean);
+                        Log.i(TAG_WEB_SOCKET, "Send RecordMode JSON--->" + toServerJson);
+                        webSocket.send(toServerJson);
+                    }
+                }
+        );
+    }
+
+    private void sendRecordModeUnid() {
+        mClient.websocket(
+                Urls.WEB_SOCKET, Urls.PORT, new AsyncHttpClient.WebSocketConnectCallback() {
+                    @Override
+                    public void onCompleted(Exception ex, WebSocket webSocket) {
+                        if (ex != null) {
+                            ex.printStackTrace();
+                            return;
+                        }
+
+                        // 发送录像方式信息给后台
+                        SendVideoModeBean infoBean = new SendVideoModeBean();
+                        infoBean.setStatus("Success");
+                        infoBean.setReason("no reason");
+                        infoBean.setPort("Dev");
+                        infoBean.setEvent("RecordMode");
+                        // TODO: 2018/7/12 暂时写死
+                        infoBean.setDevice("10006");
+                        infoBean.setCmd("Unidirectional");
+                        String toServerJson = mGson.toJson(infoBean);
+                        Log.i(TAG_WEB_SOCKET, "Send RecordMode JSON--->" + toServerJson);
                         webSocket.send(toServerJson);
                     }
                 }

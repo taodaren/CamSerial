@@ -26,4 +26,9 @@ public class AppConstant {
     public static final String CMD_FLASH_LIGHT_OFF = "OFF";                          // 灯光闪烁检测（关）
     public static final String CMD_FLASH_LIGHT = "FlashLight";                       // 灯光闪烁检测（闪烁）
     public static final String CMD_LIMIT = "Limit";                                  // 限制参数控制
+    public static final String CMD_SYNC_TIME = "SyncTime";                           // 时间校准
+    public static final String CMD_TAKE = "Take";                                    // 拍照
+    public static final String CMD_PHOTO_ID = "PhotoID";                             // 上传图片
+    public static final String CMD_VIDEO_MODE_RECYCLE = "Recycle";                   // 录像方式（回收）
+    public static final String CMD_VIDEO_MODE_UNIDIRECTIONAL = "Unidirectional";     // 录像方式（单向）
 }
