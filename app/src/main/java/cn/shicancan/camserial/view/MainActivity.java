@@ -36,6 +36,7 @@ import cn.shicancan.camserial.model.SendGetDeviceStatusBean;
 import cn.shicancan.camserial.model.SendGetSensorInfoBean;
 import cn.shicancan.camserial.model.SendHeartLinkBean;
 import cn.shicancan.camserial.model.SendLightFlashBean;
+import cn.shicancan.camserial.model.SendParameterControlBean;
 import cn.shicancan.camserial.model.SendPushStreamBean;
 import cn.shicancan.camserial.model.SendRecordStartBean;
 import cn.shicancan.camserial.presenter.IPushVideoAidlInterface;
@@ -46,6 +47,7 @@ import static cn.shicancan.camserial.app.AppConstant.CMD_DEVICE_STATE;
 import static cn.shicancan.camserial.app.AppConstant.CMD_FLASH_LIGHT;
 import static cn.shicancan.camserial.app.AppConstant.CMD_FLASH_LIGHT_OFF;
 import static cn.shicancan.camserial.app.AppConstant.CMD_FLASH_LIGHT_ON;
+import static cn.shicancan.camserial.app.AppConstant.CMD_LIMIT;
 import static cn.shicancan.camserial.app.AppConstant.CMD_PUSH_START;
 import static cn.shicancan.camserial.app.AppConstant.CMD_PUSH_STOP;
 import static cn.shicancan.camserial.app.AppConstant.CMD_RECORD_START;
@@ -207,7 +209,7 @@ public class MainActivity extends Activity {
             case STATUS_WAITING:
                 // 设备与 APP 绑定
                 if (bean.getEvent().equals("AppBindDevice")) {
-                        sendAppBindDevice();
+                    sendAppBindDevice();
                 }
                 break;
             default:
@@ -281,6 +283,12 @@ public class MainActivity extends Activity {
                     sendRecordStop();
                 }
                 break;
+            case CMD_LIMIT:
+                // 限制参数控制
+                if (bean.getEvent().equals("SetLimit")) {
+                    sendSetLimit();
+                }
+                break;
             default:
                 break;
         }
@@ -351,7 +359,7 @@ public class MainActivity extends Activity {
                             return;
                         }
 
-                        // 发送设备状态给后台
+                        // 发送设备请求连接状态给后台
                         SendDeviceRequestConnBean infoBean = new SendDeviceRequestConnBean();
                         infoBean.setCmd("Connect");
                         infoBean.setPort("Dev");
@@ -377,7 +385,7 @@ public class MainActivity extends Activity {
                             return;
                         }
 
-                        // 发送设备状态给后台
+                        // 发送设备请求连接状态给后台
                         SendDeviceRequestConnBean infoBean = new SendDeviceRequestConnBean();
                         infoBean.setCmd("Disconnect");
                         infoBean.setPort("Dev");
@@ -403,7 +411,7 @@ public class MainActivity extends Activity {
                             return;
                         }
 
-                        // 发送设备状态给后台
+                        // 发送便携设备和 App 绑定状态给后台
                         SendDeviceBindAppBean infoBean = new SendDeviceBindAppBean();
                         infoBean.setPort("Dev");
                         infoBean.setEvent("AppBindDevice");
@@ -488,7 +496,7 @@ public class MainActivity extends Activity {
                             return;
                         }
 
-                        // 发送设备状态给后台
+                        // 发送传感器信息给后台
                         SendGetSensorInfoBean infoBean = new SendGetSensorInfoBean();
                         infoBean.setStatus("Success");
                         infoBean.setReason("no reason");
@@ -578,7 +586,7 @@ public class MainActivity extends Activity {
                             return;
                         }
 
-                        // 发送开始录像信息给后台
+                        // 发送设备开始推流信息给后台
                         SendPushStreamBean infoBean = new SendPushStreamBean();
                         infoBean.setStatus("Success");
                         infoBean.setReason("no reason");
@@ -612,7 +620,7 @@ public class MainActivity extends Activity {
                                 return;
                             }
 
-                            // 发送开始录像信息给后台
+                            // 发送设备停止推流信息给后台
                             SendPushStreamBean infoBean = new SendPushStreamBean();
                             infoBean.setStatus("Success");
                             infoBean.setReason("no reason");
@@ -642,7 +650,7 @@ public class MainActivity extends Activity {
                             return;
                         }
 
-                        // 发送设备信息给后台
+                        // 发送灯光闪烁检测信息给后台
                         SendLightFlashBean infoBean = new SendLightFlashBean();
                         infoBean.setStatus("Success");
                         infoBean.setReason("no reason");
@@ -668,7 +676,7 @@ public class MainActivity extends Activity {
                             return;
                         }
 
-                        // 发送设备信息给后台
+                        // 发送灯光闪烁检测信息给后台
                         SendLightFlashBean infoBean = new SendLightFlashBean();
                         infoBean.setStatus("Success");
                         infoBean.setReason("no reason");
@@ -694,7 +702,7 @@ public class MainActivity extends Activity {
                             return;
                         }
 
-                        // 发送设备信息给后台
+                        // 发送灯光闪烁检测信息给后台
                         SendLightFlashBean infoBean = new SendLightFlashBean();
                         infoBean.setStatus("Success");
                         infoBean.setReason("no reason");
@@ -704,6 +712,33 @@ public class MainActivity extends Activity {
                         infoBean.setCmd("OFF");
                         String toServerJson = mGson.toJson(infoBean);
                         Log.i(TAG_WEB_SOCKET, "Send FlashLight JSON--->" + toServerJson);
+                        webSocket.send(toServerJson);
+                    }
+                }
+        );
+    }
+
+    private void sendSetLimit() {
+        mClient.websocket(
+                Urls.WEB_SOCKET, Urls.PORT, new AsyncHttpClient.WebSocketConnectCallback() {
+                    @Override
+                    public void onCompleted(Exception ex, WebSocket webSocket) {
+                        if (ex != null) {
+                            ex.printStackTrace();
+                            return;
+                        }
+
+                        // 发送限制参数控制信息给后台
+                        SendParameterControlBean infoBean = new SendParameterControlBean();
+                        infoBean.setStatus("Success");
+                        infoBean.setReason("no reason");
+                        infoBean.setPort("Dev");
+                        infoBean.setEvent("SetLimit");
+                        // TODO: 2018/7/12 暂时写死
+                        infoBean.setDevice("10006");
+                        infoBean.setCmd("Limit");
+                        String toServerJson = mGson.toJson(infoBean);
+                        Log.i(TAG_WEB_SOCKET, "Send SetLimit JSON--->" + toServerJson);
                         webSocket.send(toServerJson);
                     }
                 }

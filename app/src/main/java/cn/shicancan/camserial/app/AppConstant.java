@@ -25,4 +25,5 @@ public class AppConstant {
     public static final String CMD_FLASH_LIGHT_ON = "ON";                            // 灯光闪烁检测（开）
     public static final String CMD_FLASH_LIGHT_OFF = "OFF";                          // 灯光闪烁检测（关）
     public static final String CMD_FLASH_LIGHT = "FlashLight";                       // 灯光闪烁检测（闪烁）
+    public static final String CMD_LIMIT = "Limit";                                  // 限制参数控制
 }
