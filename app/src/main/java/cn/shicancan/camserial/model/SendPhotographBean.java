@@ -15,28 +15,51 @@ public class SendPhotographBean {
     public SendPhotographBean() {
     }
 
+    public String getStatus() {
+        return Status;
+    }
+
     public void setStatus(String status) {
         Status = status;
+    }
+
+    public String getReason() {
+        return Reason;
     }
 
     public void setReason(String reason) {
         Reason = reason;
     }
 
+    public String getPort() {
+        return Port;
+    }
+
     public void setPort(String port) {
         Port = port;
+    }
+
+    public String getEvent() {
+        return Event;
     }
 
     public void setEvent(String event) {
         Event = event;
     }
 
+    public String getDevice() {
+        return Device;
+    }
+
     public void setDevice(String device) {
         Device = device;
+    }
+
+    public String getCmd() {
+        return Cmd;
     }
 
     public void setCmd(String cmd) {
         Cmd = cmd;
     }
-
 }

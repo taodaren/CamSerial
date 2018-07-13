@@ -89,5 +89,4 @@ public class SendGetDeviceInfoBean {
     public void setModel(String model) {
         Model = model;
     }
-
 }

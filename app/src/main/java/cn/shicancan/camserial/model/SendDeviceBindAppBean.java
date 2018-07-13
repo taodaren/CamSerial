@@ -14,20 +14,40 @@ public class SendDeviceBindAppBean {
     public SendDeviceBindAppBean() {
     }
 
+    public String getPort() {
+        return Port;
+    }
+
     public void setPort(String port) {
         Port = port;
+    }
+
+    public String getEvent() {
+        return Event;
     }
 
     public void setEvent(String event) {
         Event = event;
     }
 
+    public String getDevice() {
+        return Device;
+    }
+
     public void setDevice(String device) {
         Device = device;
     }
 
+    public String getMacWifi() {
+        return MacWifi;
+    }
+
     public void setMacWifi(String macWifi) {
         MacWifi = macWifi;
+    }
+
+    public String getMacPhone() {
+        return MacPhone;
     }
 
     public void setMacPhone(String macPhone) {

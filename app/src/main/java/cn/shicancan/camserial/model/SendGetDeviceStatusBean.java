@@ -89,5 +89,4 @@ public class SendGetDeviceStatusBean {
     public void setShareState(String shareState) {
         ShareState = shareState;
     }
-
 }

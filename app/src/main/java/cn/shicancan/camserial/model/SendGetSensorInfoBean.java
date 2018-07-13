@@ -116,5 +116,4 @@ public class SendGetSensorInfoBean {
     public void setCompass(String compass) {
         Compass = compass;
     }
-
 }

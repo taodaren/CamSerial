@@ -14,24 +14,43 @@ public class SendHeartLinkBean {
     public SendHeartLinkBean() {
     }
 
+    public String getCmd() {
+        return Cmd;
+    }
+
     public void setCmd(String cmd) {
         Cmd = cmd;
+    }
+
+    public String getPort() {
+        return Port;
     }
 
     public void setPort(String port) {
         Port = port;
     }
 
+    public String getEvent() {
+        return Event;
+    }
+
     public void setEvent(String event) {
         Event = event;
+    }
+
+    public String getDevice() {
+        return Device;
     }
 
     public void setDevice(String device) {
         Device = device;
     }
 
+    public String getAction() {
+        return Action;
+    }
+
     public void setAction(String action) {
         Action = action;
     }
-
 }

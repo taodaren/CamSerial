@@ -53,5 +53,4 @@ public class SendDeviceRequestConnBean {
     public void setAction(String action) {
         Action = action;
     }
-
 }
