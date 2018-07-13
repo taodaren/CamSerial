@@ -34,6 +34,7 @@ import cn.shicancan.camserial.model.SendGetDeviceInfoBean;
 import cn.shicancan.camserial.model.SendGetDeviceStatusBean;
 import cn.shicancan.camserial.model.SendGetSensorInfoBean;
 import cn.shicancan.camserial.model.SendHeartLinkBean;
+import cn.shicancan.camserial.model.SendLightFlashBean;
 import cn.shicancan.camserial.model.SendPushStreamBean;
 import cn.shicancan.camserial.model.SendRecordStartBean;
 import cn.shicancan.camserial.presenter.IPushVideoAidlInterface;
@@ -41,6 +42,9 @@ import cn.shicancan.camserial.presenter.Urls;
 
 import static cn.shicancan.camserial.app.AppConstant.CMD_DEVICE_INFO;
 import static cn.shicancan.camserial.app.AppConstant.CMD_DEVICE_STATE;
+import static cn.shicancan.camserial.app.AppConstant.CMD_FLASH_LIGHT;
+import static cn.shicancan.camserial.app.AppConstant.CMD_FLASH_LIGHT_OFF;
+import static cn.shicancan.camserial.app.AppConstant.CMD_FLASH_LIGHT_ON;
 import static cn.shicancan.camserial.app.AppConstant.CMD_PUSH_START;
 import static cn.shicancan.camserial.app.AppConstant.CMD_PUSH_STOP;
 import static cn.shicancan.camserial.app.AppConstant.CMD_RECORD_START;
@@ -224,6 +228,24 @@ public class MainActivity extends Activity {
                 // 停止推流
                 if (bean.getEvent().equals("PushStream")) {
                     sendStopStream();
+                }
+                break;
+            case CMD_FLASH_LIGHT:
+                // 灯光闪烁检测（闪烁）
+                if (bean.getEvent().equals("DeviceTwinkleTest")) {
+                    sendFlashLight();
+                }
+                break;
+            case CMD_FLASH_LIGHT_ON:
+                // 灯光闪烁检测（开）
+                if (bean.getEvent().equals("DeviceTwinkleTest")) {
+                    sendFlashLightOn();
+                }
+                break;
+            case CMD_FLASH_LIGHT_OFF:
+                // 灯光闪烁检测（关）
+                if (bean.getEvent().equals("DeviceTwinkleTest")) {
+                    sendFlashLightOff();
                 }
                 break;
             case CMD_DEVICE_INFO:
@@ -575,6 +597,84 @@ public class MainActivity extends Activity {
                         infoBean.setAction("Disconnect");
                         String toServerJson = mGson.toJson(infoBean);
                         Log.i(TAG_WEB_SOCKET, "Send DeviceRequestDisconnect JSON--->" + toServerJson);
+                        webSocket.send(toServerJson);
+                    }
+                }
+        );
+    }
+
+    private void sendFlashLight() {
+        mClient.websocket(
+                Urls.WEB_SOCKET, Urls.PORT, new AsyncHttpClient.WebSocketConnectCallback() {
+                    @Override
+                    public void onCompleted(Exception ex, WebSocket webSocket) {
+                        if (ex != null) {
+                            ex.printStackTrace();
+                            return;
+                        }
+
+                        // 发送设备信息给后台
+                        SendLightFlashBean infoBean = new SendLightFlashBean();
+                        infoBean.setStatus("Success");
+                        infoBean.setReason("no reason");
+                        infoBean.setPort("Dev");
+                        infoBean.setEvent("DeviceTwinkleTest");
+                        infoBean.setDevice("10006");
+                        infoBean.setCmd("FlashLight");
+                        String toServerJson = mGson.toJson(infoBean);
+                        Log.i(TAG_WEB_SOCKET, "Send FlashLight JSON--->" + toServerJson);
+                        webSocket.send(toServerJson);
+                    }
+                }
+        );
+    }
+
+    private void sendFlashLightOn() {
+        mClient.websocket(
+                Urls.WEB_SOCKET, Urls.PORT, new AsyncHttpClient.WebSocketConnectCallback() {
+                    @Override
+                    public void onCompleted(Exception ex, WebSocket webSocket) {
+                        if (ex != null) {
+                            ex.printStackTrace();
+                            return;
+                        }
+
+                        // 发送设备信息给后台
+                        SendLightFlashBean infoBean = new SendLightFlashBean();
+                        infoBean.setStatus("Success");
+                        infoBean.setReason("no reason");
+                        infoBean.setPort("Dev");
+                        infoBean.setEvent("DeviceTwinkleTest");
+                        infoBean.setDevice("10006");
+                        infoBean.setCmd("ON");
+                        String toServerJson = mGson.toJson(infoBean);
+                        Log.i(TAG_WEB_SOCKET, "Send FlashLight JSON--->" + toServerJson);
+                        webSocket.send(toServerJson);
+                    }
+                }
+        );
+    }
+
+    private void sendFlashLightOff() {
+        mClient.websocket(
+                Urls.WEB_SOCKET, Urls.PORT, new AsyncHttpClient.WebSocketConnectCallback() {
+                    @Override
+                    public void onCompleted(Exception ex, WebSocket webSocket) {
+                        if (ex != null) {
+                            ex.printStackTrace();
+                            return;
+                        }
+
+                        // 发送设备信息给后台
+                        SendLightFlashBean infoBean = new SendLightFlashBean();
+                        infoBean.setStatus("Success");
+                        infoBean.setReason("no reason");
+                        infoBean.setPort("Dev");
+                        infoBean.setEvent("DeviceTwinkleTest");
+                        infoBean.setDevice("10006");
+                        infoBean.setCmd("OFF");
+                        String toServerJson = mGson.toJson(infoBean);
+                        Log.i(TAG_WEB_SOCKET, "Send FlashLight JSON--->" + toServerJson);
                         webSocket.send(toServerJson);
                     }
                 }

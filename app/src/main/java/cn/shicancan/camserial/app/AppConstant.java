@@ -22,4 +22,7 @@ public class AppConstant {
     public static final String CMD_RECORD_STOP = "RecordStop";                       // 停止录像
     public static final String CMD_PUSH_START = "PushStart";                         // 开始推流
     public static final String CMD_PUSH_STOP = "PushStop";                           // 停止推流
+    public static final String CMD_FLASH_LIGHT_ON = "ON";                            // 灯光闪烁检测（开）
+    public static final String CMD_FLASH_LIGHT_OFF = "OFF";                          // 灯光闪烁检测（关）
+    public static final String CMD_FLASH_LIGHT = "FlashLight";                       // 灯光闪烁检测（闪烁）
 }
