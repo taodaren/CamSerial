@@ -32,6 +32,7 @@ public class AppConstant {
     public static final String CMD_VIDEO_MODE_RECYCLE = "Recycle";                                 // 录像方式（回收）
     public static final String CMD_VIDEO_MODE_UNIDIRECTIONAL = "Unidirectional";                   // 录像方式（单向）
 
+    public static final String EVENT_HEART_LINK = "HeartLink";                                     // 定时心跳
     public static final String EVENT_APP_BIND_DEVICE = "AppBindDevice";                            // 设备与 APP 绑定
     public static final String EVENT_DEVICE_REQ_CONNECTION = "DeviceReqConnection";                // 设备请求连接
     public static final String EVENT_DEVICE_TWINKLE_TEST = "DeviceTwinkleTest";                    // 灯光闪烁检测

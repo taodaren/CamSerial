@@ -6,8 +6,8 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.serialport.SerialPort;
 import android.util.Log;
 import android.view.View;
@@ -41,6 +41,7 @@ import cn.shicancan.camserial.model.SendPhotographBean;
 import cn.shicancan.camserial.model.SendPushStreamBean;
 import cn.shicancan.camserial.model.SendRecordStartBean;
 import cn.shicancan.camserial.model.SendTimeCalibrationBean;
+import cn.shicancan.camserial.model.SendTimingHeartBean;
 import cn.shicancan.camserial.model.SendUploadImgBean;
 import cn.shicancan.camserial.model.SendVideoModeBean;
 import cn.shicancan.camserial.presenter.IPushVideoAidlInterface;
@@ -69,6 +70,7 @@ import static cn.shicancan.camserial.app.AppConstant.EVENT_DEVICE_TWINKLE_TEST;
 import static cn.shicancan.camserial.app.AppConstant.EVENT_GET_DEVICE_INFO;
 import static cn.shicancan.camserial.app.AppConstant.EVENT_GET_DEVICE_STATE;
 import static cn.shicancan.camserial.app.AppConstant.EVENT_GET_SENSOR_DATA;
+import static cn.shicancan.camserial.app.AppConstant.EVENT_HEART_LINK;
 import static cn.shicancan.camserial.app.AppConstant.EVENT_PUSH_STREAM;
 import static cn.shicancan.camserial.app.AppConstant.EVENT_RECORD_MODE;
 import static cn.shicancan.camserial.app.AppConstant.EVENT_SET_LIMIT;
@@ -104,6 +106,7 @@ public class MainActivity extends Activity {
     private String mModel, mDeviceId, mDeviceNum, mMacWifi, mMacPhone;
     private AsyncHttpClient mClient;
     private Gson mGson;
+    private WebSocket mWebSocket;
     // 推流接口
     private IPushVideoAidlInterface mIPush;
     // 定义推流
@@ -122,6 +125,18 @@ public class MainActivity extends Activity {
     protected SerialPort mSerialPort;
     private ReadThread mReadThread;
 
+    private Handler mHandler = new Handler();
+    private Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            // 要做的事情
+            // 定时发送心跳信息给服务器
+            sendHeartLinkTiming();
+            // 每 5 秒执行一次 Runnable
+            mHandler.postDelayed(this, 30000);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,6 +147,8 @@ public class MainActivity extends Activity {
         getPhoneInfo();
         setWebSocket();
         bindVideoStream();
+        // 启动计时器，开机 10 秒启动
+        mHandler.postDelayed(mRunnable, 10000);
     }
 
     /**
@@ -178,8 +195,10 @@ public class MainActivity extends Activity {
                             return;
                         }
 
+                        mWebSocket = webSocket;
+
                         // 发送开机心跳数据给后台
-                        sendHeartLinkInfo(webSocket);
+                        sendHeartLinkInfo();
 
                         // 接收后台数据后的操作，该方法是个线程，如果要修改页面，记得放在主线程里
                         webSocket.setStringCallback(new WebSocket.StringCallback() {
@@ -360,7 +379,7 @@ public class MainActivity extends Activity {
 
     // TODO: 以下 send() 皆是发送数据给服务器相关方法
 
-    private void sendHeartLinkInfo(WebSocket webSocket) {
+    private void sendHeartLinkInfo() {
         // 开机心跳发送设备信息给后台
         SendHeartLinkBean infoBean = new SendHeartLinkBean();
         infoBean.setCmd(VALUE_CONNECT);
@@ -370,7 +389,16 @@ public class MainActivity extends Activity {
         infoBean.setAction(VALUE_CONNECT);
         String toServerJson = mGson.toJson(infoBean);
         Log.i(TAG_WEB_SOCKET, "Send HeartLinkInfo JSON--->" + toServerJson);
-        webSocket.send(toServerJson);
+        mWebSocket.send(toServerJson);
+    }
+
+    private void sendHeartLinkTiming() {
+        // 发送定时心跳信息给后台
+        SendTimingHeartBean infoBean = new SendTimingHeartBean();
+        infoBean.setEvent(EVENT_HEART_LINK);
+        String toServerJson = mGson.toJson(infoBean);
+        Log.i(TAG_WEB_SOCKET, "Send HeartLinkTiming JSON--->" + toServerJson);
+        mWebSocket.send(toServerJson);
     }
 
     private void sendDeviceReqConn() {
@@ -952,6 +980,9 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        // 停止计时器
+        mHandler.removeCallbacks(mRunnable);
+
         if (mReadThread != null) {
             mReadThread.interrupt();
         }
