@@ -132,7 +132,7 @@ public class MainActivity extends Activity {
             // 要做的事情
             // 定时发送心跳信息给服务器
             sendHeartLinkTiming();
-            // 每 5 秒执行一次 Runnable
+            // 每 30 秒执行一次 Runnable
             mHandler.postDelayed(this, 30000);
         }
     };
